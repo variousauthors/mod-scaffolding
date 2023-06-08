@@ -1,3 +1,12 @@
+# Cucurbits
+
+This is a "slow-tech" mod.
+
+## Issues
+
+ - breaking cucurbits in creative drops their contents, but that's not normal...
+ - hitting a cucurbit in survival breaks it instantly, whereas pumpkins etc... take many hits to break...
+ 
 # mod-scaffolding
 The idea here is you can clone this repo, run the commands in the README and be ready to go. This is just an implementation of [Shadowfacts' 1.12 modding tutorial][0]. The steps described below are basically cribbed from [the forge docs][1]. This scaffold is for minecraft version 1.12.2 and forge version 14.23.5.2847 because those are the versions I am using in the modpack I maintain. So watch out for that log4j is all I'm saying!
 
@@ -23,3 +32,4 @@ That's it! Now point your git remote origin at another repo and go learn modding
 
 [0]: https://shadowfacts.net/tutorials/forge-modding-112/
 [1]: https://mcforge.readthedocs.io/en/1.12.x/gettingstarted/
+

@@ -24,7 +24,7 @@ abstract public class BlockStemCucurbit extends BlockStem {
     protected void growFruit(World worldIn, BlockPos stemPos, IBlockState state, Random rand) {
         if (cropIsAlreadyGrown(worldIn, stemPos)) return;
 
-        /** @ASK should this really be mutating the parameter? Vanilla does this. */
+        /* @ASK should this really be mutating the parameter? Vanilla does this. */
         BlockPos targetPos = stemPos.offset(EnumFacing.Plane.HORIZONTAL.random(rand));
 
         if (!canGrowCropAtPos(worldIn, targetPos)) return;
@@ -73,7 +73,8 @@ abstract public class BlockStemCucurbit extends BlockStem {
 
     /* @TODO this should check only the FACING direction
     *    since otherwise it will pick up fruit to which
-    * it is not attached... this should be renamed to "findAttachedCrop" or something */
+    *    it is not attached... this should be renamed to
+    *    "findAttachedCrop" or something */
     protected Optional<BlockPos> findCropMatchingStem(World worldIn, BlockPos stemPos) {
         for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
         {

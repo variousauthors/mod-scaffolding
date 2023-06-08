@@ -41,6 +41,9 @@ public class BlockCorecumber extends BlockTileEntity<TileEntityCorecumber> imple
         return new TileEntityCorecumber();
     }
 
+    /** @TODO this seems wrong, when I break the block in world
+     * it drops the ores even in creative mode... in creative mode
+     * broken blocks shouldn't drop anything, right? */
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         // TODO this should also drop a seed
@@ -55,6 +58,8 @@ public class BlockCorecumber extends BlockTileEntity<TileEntityCorecumber> imple
         ItemStack stack = itemHandler.getStackInSlot(0);
 
         if (!stack.isEmpty()) {
+            System.out.println("item stack");
+            System.out.println(stack.getCount());
             EntityItem item = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
             world.spawnEntity(item);
         }

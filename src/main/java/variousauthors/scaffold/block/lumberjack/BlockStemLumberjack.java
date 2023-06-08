@@ -134,7 +134,7 @@ public class BlockStemLumberjack extends BlockStemCucurbit
         return drops;
     }
 
-    final private int FUEL_EXTRACTION_RATE = 8;
+    final private int FUEL_EXTRACTION_RATE = 1;
 
     @Override
     protected void tryToGrowCrop(World worldIn, BlockPos stemPos, BlockPos targetPos) {

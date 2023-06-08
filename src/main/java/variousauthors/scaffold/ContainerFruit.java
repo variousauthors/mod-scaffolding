@@ -45,7 +45,13 @@ public interface ContainerFruit<TE extends TileEntity> {
 
         return getItemHandler(worldIn, pos)
                 .map(itemHandler -> {
+                    System.out.println("insertContents->itemHandler");
+                    System.out.println(itemHandler.getStackInSlot(0).getDisplayName());
+                    System.out.println(itemHandler.getStackInSlot(0).getCount());
                     for (ItemStack drop : drops) {
+                        System.out.println("insertContents->drop");
+                        System.out.println(drop.getDisplayName());
+                        System.out.println(drop.getCount());
                         ItemStack result = itemHandler.insertItem(0, drop, false);
 
                         if (!result.isEmpty()) {
@@ -76,15 +82,41 @@ public interface ContainerFruit<TE extends TileEntity> {
         });
     }
 
-    /* by default there is just one slot, so this literally just checks if that
-    * slot is full. */
     default boolean isFull (World worldIn, BlockPos pos) {
+        return isFull(worldIn, pos, 0);
+    }
+
+    default boolean isFull (World worldIn, BlockPos pos, int index) {
         return getItemHandler(worldIn, pos)
                 .map(itemHandler -> {
-                    ItemStack stack = itemHandler.getStackInSlot(0);
+                    ItemStack stack = itemHandler.getStackInSlot(index);
 
-                    return !(stack.getCount() < itemHandler.getSlotLimit(0));
+                    return !(stack.getCount() < itemHandler.getSlotLimit(index));
                 })
                 .orElse(false);
+    }
+
+    default int getSlotLimit (World worldIn, BlockPos pos) {
+        return getSlotLimit(worldIn, pos, 0);
+    }
+
+    default int getSlotLimit (World worldIn, BlockPos pos, int index) {
+        return getItemHandler(worldIn, pos)
+                .map(itemHandler -> itemHandler.getSlotLimit(index))
+                .orElse(64);
+    }
+
+    default int getCount (World worldIn, BlockPos pos) {
+        return getCount(worldIn, pos, 0);
+    }
+
+    default int getCount (World worldIn, BlockPos pos, int index) {
+        return getItemHandler(worldIn, pos)
+                .map(itemHandler -> {
+                    ItemStack stack = itemHandler.getStackInSlot(index);
+
+                    return stack.getCount();
+                })
+                .orElse(0);
     }
 }

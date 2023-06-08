@@ -16,6 +16,12 @@ import variousauthors.scaffold.block.BlockStemCucurbit;
 import java.util.Optional;
 import java.util.Random;
 
+/** The Corecumber searches below itself for ores
+ * when it finds an ore it breaks the ore and replaces it
+ * with POROUS_STONE. The stem creates a fruit in world
+ * and the drops from the ore are inserted into the fruit.
+ * The fruit may
+ * */
 public class BlockStemCorecumber extends BlockStemCucurbit
 {
     public BlockStemCorecumber(Block crop, String name)

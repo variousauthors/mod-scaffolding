@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Random;
 
+/** The Baker's Squash stem search for harvestable blocks that have a furnace recipe
+ * and it fills up with their products. It will not break just any block! */
 public class BlockStemBakersSquash extends BlockStemCucurbit
 {
     public BlockStemBakersSquash(Block crop, String name)
@@ -24,10 +26,13 @@ public class BlockStemBakersSquash extends BlockStemCucurbit
 
     @Override
     protected void growFruit(World worldIn, BlockPos stemPos, IBlockState state, Random rand) {
+        System.out.println("BlockStemBakersSquash->growFruit");
         if (cropIsAlreadyGrown(worldIn, stemPos)) {
+            System.out.println("crop is grown");
             // if crop is already grown, do the crop grown version
             tryToFeedCrop(worldIn, stemPos);
         } else {
+            System.out.println("plant new crop");
             /* TODO should this really be mutating the parameter? Vanilla does this. */
             BlockPos targetPos = stemPos.offset(EnumFacing.Plane.HORIZONTAL.random(rand));
 
@@ -45,12 +50,17 @@ public class BlockStemBakersSquash extends BlockStemCucurbit
 
             ContainerFruit fruit = (ContainerFruit) crop;
 
+            System.out.println("BlockStemBakersSquash->tryToFeedCrop");
+            System.out.println(fruit.getCount(worldIn, cropPos));
             if (fruit.isFull(worldIn, cropPos)) return;
 
             findFuelBlockInWorld(worldIn, stemPos, cropPos).ifPresent(fuelPos -> {
-                IBlockState fuelState = worldIn.getBlockState(fuelPos);
-                NonNullList<ItemStack> drops = extractDropsFromFuel(worldIn, fuelPos, fuelState, 0, FUEL_EXTRACTION_RATE);
+                System.out.println("BlockStemBakersSquash->tryToFeedCrop->fuel");
 
+                IBlockState fuelState = worldIn.getBlockState(fuelPos);
+                System.out.println(fuelState);
+                NonNullList<ItemStack> drops = extractDropsFromFuel(worldIn, fuelPos, fuelState, 0, FUEL_EXTRACTION_RATE);
+                System.out.println(drops);
                 /* maybe we should throw here, since we've already checked in a previous method that
                  * the drops were not empty... maybe just during dev? */
                 if (drops.isEmpty()) return;
@@ -64,24 +74,31 @@ public class BlockStemBakersSquash extends BlockStemCucurbit
 
     /** this breaks the block, gets the drops, or asks the fruit to extract its contents */
     private NonNullList<ItemStack> extractDropsFromFuel(World worldIn, BlockPos fuelPos, IBlockState fuelState, int fortune, int amount) {
+        System.out.println("extractDropsFromFuel");
         Block fuelBlock = worldIn.getBlockState(fuelPos).getBlock();
         NonNullList<ItemStack> drops = NonNullList.create();
+        System.out.println(drops);
 
         if (fuelBlock instanceof ContainerFruit) {
             ((ContainerFruit<?>) fuelBlock).extractContents(drops, worldIn, fuelPos, amount);
         } else if (fuelBlock instanceof BlockCrops) {
+            System.out.println("extractDropsFromFuel->crop");
+
             // for now we will just use potato
             fuelBlock.getDrops(drops, worldIn, fuelPos, fuelState, fortune);
+            System.out.println(drops);
 
-            // remove one seed item
+            boolean hasGrabbedSeed = false;
+            // remove a seed item to replant
             for (int i = 0; i < drops.size(); i++) {
                 ItemStack drop = drops.get(i);
 
-                if (drop.isItemEqual(fuelBlock.getItem(worldIn, fuelPos, fuelState))) {
+                if (!hasGrabbedSeed && drop.isItemEqual(fuelBlock.getItem(worldIn, fuelPos, fuelState))) {
                     drop.shrink(1);
+                    hasGrabbedSeed = true;
                 }
             }
-
+            System.out.println(drops);
             // reset the crop to its initial state
             worldIn.setBlockState(fuelPos, fuelBlock.getDefaultState());
         }
@@ -138,6 +155,9 @@ public class BlockStemBakersSquash extends BlockStemCucurbit
     * feeds the cooked drops into the fruit, which is just a container */
     /* cook and insert will do bounds checking on the fruit, and fail to insert if the fruit is full */
     private void cookAndInsert(World worldIn, BlockPos pos, NonNullList<ItemStack> drops) {
+        System.out.println("BlockStemBakersSquash->cookAndInsert");
+        System.out.println(drops);
+
         NonNullList<ItemStack> cooked = NonNullList.create();
 
         for (ItemStack drop : drops) {
@@ -152,12 +172,31 @@ public class BlockStemBakersSquash extends BlockStemCucurbit
         if (cooked.isEmpty()) return;
 
         Block block = worldIn.getBlockState(pos).getBlock();
+        System.out.println("fruit block state");
+        System.out.println(block.getBlockState());
 
         if (isContainerFruit(block)) {
             ContainerFruit fruit = (ContainerFruit) block;
 
             if (!fruit.isFull(worldIn, pos)) {
                 fruit.insertContents(cooked, worldIn, pos);
+
+                // we know this to be true
+                BlockBakersSquash squash = (BlockBakersSquash) block;
+                double percent = (double) fruit.getCount(worldIn, pos) / (double) fruit.getSlotLimit(worldIn, pos);
+                System.out.println("before swell");
+                System.out.println(fruit.getCount(worldIn, pos));
+                System.out.println(fruit.getSlotLimit(worldIn, pos));
+                System.out.println(percent);
+
+                if (squash.canSwell(worldIn, pos, worldIn.getBlockState(pos), worldIn.isRemote)) {
+                    squash.swellFruit(worldIn, pos, worldIn.getBlockState(pos), percent);
+                }
+
+                System.out.println("after swell");
+                System.out.println(fruit.getCount(worldIn, pos));
+                System.out.println(fruit.getSlotLimit(worldIn, pos));
+                System.out.println(percent);
             }
         }
     }
