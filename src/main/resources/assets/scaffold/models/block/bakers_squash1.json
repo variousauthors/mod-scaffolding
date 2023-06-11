@@ -1,0 +1,35 @@
+{
+  "textures": {
+    "top": "blocks/pumpkin_top",
+    "side": "blocks/pumpkin_side"
+  },
+  "elements": [
+    {
+      "from": [4, 0, 0],
+      "to": [12, 12, 8],
+      "faces": {
+        "up": {
+          "uv": [4, 4, 12, 12],
+          "texture": "#top"
+        },
+        "down": {
+          "uv": [4, 4, 12, 12],
+          "texture": "#top",
+          "cullface": "down"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        }
+      }
+    }
+  ]
+}

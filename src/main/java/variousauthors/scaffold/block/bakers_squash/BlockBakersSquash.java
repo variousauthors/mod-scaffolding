@@ -2,6 +2,7 @@ package variousauthors.scaffold.block.bakers_squash;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -21,27 +22,53 @@ import variousauthors.scaffold.ContainerFruit;
 import variousauthors.scaffold.block.BlockTileEntity;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class BlockBakersSquash extends BlockTileEntity<TileEntityBakersSquash> implements CanRegisterItemBlock, ContainerFruit<TileEntityBakersSquash> {
     // baker's squash swell as they fill up with items
-    // 0 - 15 | 16 - 31 | 32 - 47 | 48 - 63 | 64
-    public static final PropertyInteger SWELL = PropertyInteger.create("swell", 0, 4);
+    // 0 - 20 | 21 - 41 | 42 - 63 | 64
+    public static final PropertyInteger SWELL = PropertyInteger.create("swell", 0, 3);
 
-    public BlockBakersSquash(String name)
-    {
+    // the direction to the stem, default is north
+    // this is used to determine rotation of the model
+    public static final PropertyDirection STEM_DIR = PropertyDirection.create("stem_dir", Arrays.asList(EnumFacing.HORIZONTALS));
+
+    public BlockBakersSquash(String name) {
         super(Material.ROCK, name);
 
-        this.setDefaultState(this.blockState.getBaseState().withProperty(SWELL, Integer.valueOf(0)));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(SWELL, Integer.valueOf(0)).withProperty(STEM_DIR, EnumFacing.NORTH));
+    }
+
+    @Override
+    @Deprecated
+    public boolean isOpaqueCube(IBlockState state) {
+        return state.getValue(SWELL).intValue() == 3;
+    }
+
+    @Override
+    @Deprecated
+    public boolean isFullCube(IBlockState state) {
+        return state.getValue(SWELL).intValue() == 3;
+    }
+
+    public IBlockState getInitialState(BlockPos fruitPos, BlockPos stemPos) {
+        BlockPos vec = stemPos.subtract(fruitPos);
+        EnumFacing stemDir = EnumFacing.getFacingFromVector(vec.getX(), vec.getY(), vec.getZ());
+
+        return this.getDefaultState().withProperty(STEM_DIR, stemDir);
     }
 
     /** @TODO need to deal with the AABB, see BlockStem for details */
 
-    /** sets the fruit swell to the given percent */
-    public void swellFruit(World worldIn, BlockPos pos, IBlockState state, double percent)
-    {
-        double a = percent * 4;
-        int b = Math.min(4, (int) a);
+    /**
+     * sets the fruit swell to the given percent
+     */
+    public void swellFruit(World worldIn, BlockPos pos, IBlockState state, double percent) {
+        double a = percent * 3;
+        int b = Math.min(3, (int) a);
 
         ContainerFruit fruit = (ContainerFruit) state.getBlock();
 
@@ -59,16 +86,14 @@ public class BlockBakersSquash extends BlockTileEntity<TileEntityBakersSquash> i
     /**
      * Whether this IGrowable can grow
      */
-    public boolean canSwell(World worldIn, BlockPos pos, IBlockState state, boolean isClient)
-    {
-        return ((Integer)state.getValue(SWELL)).intValue() != 4;
+    public boolean canSwell(World worldIn, BlockPos pos, IBlockState state, boolean isClient) {
+        return ((Integer) state.getValue(SWELL)).intValue() != 3;
     }
 
     /**
      * Returns the quantity of items to drop on block destruction.
      */
-    public int quantityDropped(Random random)
-    {
+    public int quantityDropped(Random random) {
         return 0;
     }
 
@@ -105,21 +130,22 @@ public class BlockBakersSquash extends BlockTileEntity<TileEntityBakersSquash> i
     /**
      * Convert the given metadata into a BlockState for this Block
      */
-    public IBlockState getStateFromMeta(int meta)
-    {
-        return this.getDefaultState().withProperty(SWELL, Integer.valueOf(meta));
+    public IBlockState getStateFromMeta(int meta) {
+        System.out.println("getStateFromMeta");
+        System.out.println(meta);
+        return this.getDefaultState()
+                .withProperty(SWELL, Integer.valueOf(meta >> 2))
+                .withProperty(STEM_DIR, EnumFacing.getHorizontal(meta & 0b0011));
     }
 
     /**
      * Convert the BlockState into the correct metadata value
      */
-    public int getMetaFromState(IBlockState state)
-    {
-        return ((Integer)state.getValue(SWELL)).intValue();
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(SWELL) << 2 | state.getValue(STEM_DIR).getHorizontalIndex();
     }
 
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, new IProperty[] {SWELL});
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, new IProperty[]{SWELL, STEM_DIR});
     }
 }

@@ -143,7 +143,9 @@ public class BlockStemBakersSquash extends BlockStemCucurbit
             * the drops were not empty... maybe just during dev? */
             if (drops.isEmpty()) return;
 
-            if (!worldIn.setBlockState(targetPos, this.crop.getDefaultState())) return;
+            BlockBakersSquash crop = (BlockBakersSquash) this.crop;
+
+            if (!worldIn.setBlockState(targetPos, crop.getInitialState(targetPos, stemPos))) return;
 
             /* we are not doing anything with the remainder right now
             * but maybe later we can... */

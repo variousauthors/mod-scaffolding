@@ -1,8 +1,23 @@
 {
+  "forge_marker": 1,
   "variants": {
-    "normal": { "model": "scaffold:bakers_squash" },
+    "swell": {
+      "0": { "model" : "scaffold:bakers_squash0" },
+      "1": { "model" : "scaffold:bakers_squash1" },
+      "2": { "model" : "scaffold:bakers_squash2" },
+      "3": { "model" : "scaffold:bakers_squash3" }
+    },
+    "stem_dir": {
+      "north": {},
+      "east": {
+        "y": 90
+      },
+      "south": { "y" : 180 },
+      "west": { "y":  -90 }
+    },
     "inventory": {
-      "model": "scaffold:bakers_squash"
+      "model": "scaffold:bakers_squash3",
+      "transform": "forge:default-block"
     }
   }
 }
