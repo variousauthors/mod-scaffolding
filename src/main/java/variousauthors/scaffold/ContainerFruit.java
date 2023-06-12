@@ -10,8 +10,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.lwjgl.Sys;
-import scala.tools.cmd.gen.AnyValReps;
 
 import java.util.Optional;
 
@@ -45,13 +43,7 @@ public interface ContainerFruit<TE extends TileEntity> {
 
         return getItemHandler(worldIn, pos)
                 .map(itemHandler -> {
-                    System.out.println("insertContents->itemHandler");
-                    System.out.println(itemHandler.getStackInSlot(0).getDisplayName());
-                    System.out.println(itemHandler.getStackInSlot(0).getCount());
                     for (ItemStack drop : drops) {
-                        System.out.println("insertContents->drop");
-                        System.out.println(drop.getDisplayName());
-                        System.out.println(drop.getCount());
                         ItemStack result = itemHandler.insertItem(0, drop, false);
 
                         if (!result.isEmpty()) {

@@ -58,8 +58,6 @@ public class BlockCorecumber extends BlockTileEntity<TileEntityCorecumber> imple
         ItemStack stack = itemHandler.getStackInSlot(0);
 
         if (!stack.isEmpty()) {
-            System.out.println("item stack");
-            System.out.println(stack.getCount());
             EntityItem item = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
             world.spawnEntity(item);
         }

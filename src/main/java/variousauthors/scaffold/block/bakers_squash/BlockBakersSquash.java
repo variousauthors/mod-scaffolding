@@ -72,15 +72,9 @@ public class BlockBakersSquash extends BlockTileEntity<TileEntityBakersSquash> i
 
         ContainerFruit fruit = (ContainerFruit) state.getBlock();
 
-        System.out.println("swellFruit-before");
-        System.out.println(fruit.getCount(worldIn, pos));
-
         TileEntityBakersSquash te = (TileEntityBakersSquash) worldIn.getTileEntity(pos);
 
         worldIn.setBlockState(pos, state.withProperty(SWELL, b), 2);
-
-        System.out.println("swellFruit-after");
-        System.out.println(fruit.getCount(worldIn, pos));
     }
 
     /**
@@ -131,8 +125,6 @@ public class BlockBakersSquash extends BlockTileEntity<TileEntityBakersSquash> i
      * Convert the given metadata into a BlockState for this Block
      */
     public IBlockState getStateFromMeta(int meta) {
-        System.out.println("getStateFromMeta");
-        System.out.println(meta);
         return this.getDefaultState()
                 .withProperty(SWELL, Integer.valueOf(meta >> 2))
                 .withProperty(STEM_DIR, EnumFacing.getHorizontal(meta & 0b0011));
