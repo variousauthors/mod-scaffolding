@@ -36,6 +36,45 @@ public class BlockBakersSquash extends BlockTileEntity<TileEntityBakersSquash> i
     // this is used to determine rotation of the model
     public static final PropertyDirection STEM_DIR = PropertyDirection.create("stem_dir", Arrays.asList(EnumFacing.HORIZONTALS));
 
+    protected static final AxisAlignedBB[][] STEM_AABB = new AxisAlignedBB[][]{
+            // south
+            new AxisAlignedBB[] {
+                    new AxisAlignedBB(0.625D, 0.625D, 0.75D, 0.375D, 0.0D, 1.0D),
+                    new AxisAlignedBB(0.75D, 0.75D, 0.5D, 0.25D, 0.0D, 1.0D),
+                    new AxisAlignedBB(0.875D, 0.875D, 0.25D, 0.125D, 1.0D, 1.0D),
+                    new AxisAlignedBB(1.0D, 1.0D, 0.0D, 0.0D, 0.0D, 1.0D)
+            },
+            // west
+            new AxisAlignedBB[] {
+                    new AxisAlignedBB(0.0D, 0.0D, 0.375D, 0.25D, 0.625D, 0.625D),
+                    new AxisAlignedBB(0.0D, 0.0D, 0.25D, 0.5D, 0.75D, 0.75D),
+                    new AxisAlignedBB(0.0D, 0.0D, 0.125D, 0.75D, 0.875D, 0.875D),
+                    new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)
+            },
+            // north
+            new AxisAlignedBB[] {
+                    new AxisAlignedBB(0.625D, 0.625D, 0.25D, 0.375D, 0.0D, 0.0D),
+                    new AxisAlignedBB(0.75D, 0.75D, 0.5D, 0.25D, 0.0D, 0.0D),
+                    new AxisAlignedBB(0.875D, 0.875D, 0.75D, 0.125D, 0.0D, 0.0D),
+                    new AxisAlignedBB(1.0D, 1.0D, 1.0D, 0.0D, 0.0D, 0.0D)
+            },
+            // east
+            new AxisAlignedBB[] {
+                    new AxisAlignedBB(1D, 0.0D, 0.375D,  0.75D, 0.625D, 0.625D),
+                    new AxisAlignedBB(1D, 0.0D, 0.25D, 0.5D, 0.75D, 0.75D),
+                    new AxisAlignedBB(1D, 0.0D, 0.125D, 0.25D, 0.875D, 0.875D),
+                    new AxisAlignedBB(1D, 0.0D, 0.0D, 0D, 1D, 1D)
+            },
+    };
+
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        int facing = state.getValue(STEM_DIR).getHorizontalIndex();
+        AxisAlignedBB aabb = STEM_AABB[facing][((Integer)state.getValue(SWELL)).intValue()];
+
+        return aabb;
+    }
+
     public BlockBakersSquash(String name) {
         super(Material.ROCK, name);
 

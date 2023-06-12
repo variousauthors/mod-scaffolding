@@ -71,20 +71,16 @@ abstract public class BlockStemCucurbit extends BlockStem {
                 .orElse(false);
     }
 
-    /* @TODO this should check only the FACING direction
-    *    since otherwise it will pick up fruit to which
-    *    it is not attached... this should be renamed to
-    *    "findAttachedCrop" or something */
     protected Optional<BlockPos> findCropMatchingStem(World worldIn, BlockPos stemPos) {
-        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
-        {
-            BlockPos foundPos = stemPos.offset(enumfacing);
-            Block crop = worldIn.getBlockState(foundPos).getBlock();
+        IBlockState stemState = worldIn.getBlockState(stemPos);
+        EnumFacing enumFacing = stemState.getActualState(worldIn, stemPos).getValue(BlockStemCucurbit.FACING);
 
-            if (crop == this.crop)
-            {
-                return Optional.ofNullable(foundPos);
-            }
+        BlockPos foundPos = stemPos.offset(enumFacing);
+        Block crop = worldIn.getBlockState(foundPos).getBlock();
+
+        if (crop == this.crop)
+        {
+            return Optional.ofNullable(foundPos);
         }
 
         return Optional.empty();
